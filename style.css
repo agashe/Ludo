@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.blue {
+    background-color: blue;
+}
+.green {
+    background-color: green;
+}
+.red {
+    background-color: red;
+}
+.yellow {
+    background-color: yellow;
+}
+
+/* ************************************************** */
+
+.board {
+    height: 550px;
+    width: 550px;
+    margin: 25px auto;
+    border: 2px solid #000000;
+}
+
+.row {
+    height: 40%;
+    width: 100%;
+    clear: both;
+}
+.row-middle {
+    height: 20%;
+}
+
+/* ************************************************** */
+
+.home {
+    box-sizing: border-box;
+    height: 100%;
+    width: 40%;
+    border: 1px solid #000000;
+    float: left;
+}
+.home-right {
+    float: right;
+}
+
+.white-circle {
+    box-sizing: border-box;
+    height: 80%;
+    width: 80%;
+    margin: 10% auto;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 80%;
+}
+.circles-row {
+    height: 25%;
+    width: 100%;
+    padding: 0 10px 0 10px;
+}
+.circles-row-top {
+    padding-top: 15px;
+}
+.circles-row-bottom {
+    padding-bottom: 25px;
+}
+.small-circle {
+    box-sizing: border-box;
+    height: 100%;
+    width: 25%;
+    margin: 15px;
+    margin-right: 20px;
+    border: 1px solid #000000;
+    border-radius: 100%;
+    float: left;
+}
+
+.track {
+    float: left;
+}
+.track-vertical {
+    height: 100%;
+    width: 20%;
+}
+.track-horizontal {
+    height: 100%;
+    width: 40%;
+}
+
+.finish {
+    box-sizing: border-box;
+    height: 100%;
+    width: 20%;
+    border: 1px solid #000000;
+    float: left;
+}
+
+/* ************************************************** */
+
+.tiles-row {
+    height: 16.6667%;
+    width: 100%;
+    clear: both;
+}
+.tile {
+    box-sizing: border-box;
+    height: 100%;
+    width: 33.3333%;
+    float: left;
+    border: 1px solid #000000;
+}
+.tiles-row-horizontal {
+    height: 33.3333%;
+}
+.tile-h {
+    width: 16.6667%;
+}

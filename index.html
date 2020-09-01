@@ -1,11 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>Ludo - JS</title>
+    </head>
+    <body>
+        <div class="board">
+            <div class="row">
+                <div id="home-1" class="home red">
+                    <div class="white-circle">
+                        <div class="circles-row circles-row-top">
+                            <div class="small-circle red"></div>
+                            <div class="small-circle red"></div>
+                        </div>
+                        <div class="circles-row circles-row-bottom">
+                            <div class="small-circle red"></div>
+                            <div class="small-circle red"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="track track-vertical">
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile"></div><div class="tile"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile green"></div><div class="tile green"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile green"></div><div class="tile green"></div><div class="tile"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile green"></div><div class="tile"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile green"></div><div class="tile"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile green"></div><div class="tile"></div>
+                    </div>
+                </div>
+                <div id="home-2" class="home home-right green">
+                    <div class="white-circle">
+                        <div class="circles-row circles-row-top">
+                            <div class="small-circle green"></div>
+                            <div class="small-circle green"></div>
+                        </div>
+                        <div class="circles-row circles-row-bottom">
+                            <div class="small-circle green"></div>
+                            <div class="small-circle green"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-middle">
+                <div class="track track-horizontal">
+                    <div class="tiles-row tiles-row-horizontal">
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h red"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                    </div>
+                    <div class="tiles-row tiles-row-horizontal">
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h red"></div>
+                        <div class="tile tile-h red"></div>
+                        <div class="tile tile-h red"></div>
+                        <div class="tile tile-h red"></div>
+                        <div class="tile tile-h red"></div>
+                    </div>
+                    <div class="tiles-row tiles-row-horizontal">
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h red"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                    </div>
+                </div>
+                <div class="finish"></div>
+                <div class="track track-horizontal">
+                    <div class="tiles-row tiles-row-horizontal">
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h yellow"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                    </div>
+                    <div class="tiles-row tiles-row-horizontal">
+                        <div class="tile tile-h yellow"></div>
+                        <div class="tile tile-h yellow"></div>
+                        <div class="tile tile-h yellow"></div>
+                        <div class="tile tile-h yellow"></div>
+                        <div class="tile tile-h yellow"></div>
+                        <div class="tile tile-h"></div>
+                    </div>
+                    <div class="tiles-row tiles-row-horizontal">
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h"></div>
+                        <div class="tile tile-h yellow"></div>
+                        <div class="tile tile-h"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div id="home-1" class="home blue">
+                    <div class="white-circle">
+                        <div class="circles-row circles-row-top">
+                            <div class="small-circle blue"></div>
+                            <div class="small-circle blue"></div>
+                        </div>
+                        <div class="circles-row circles-row-bottom">
+                            <div class="small-circle blue"></div>
+                            <div class="small-circle blue"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="track track-vertical">
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile blue"></div><div class="tile"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile blue"></div><div class="tile"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile blue"></div><div class="tile"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile blue"></div><div class="tile blue"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile blue"></div><div class="tile blue"></div><div class="tile"></div>
+                    </div>
+                    <div class="tiles-row">
+                        <div class="tile"></div><div class="tile"></div><div class="tile"></div>
+                    </div>
+                </div>
+                <div id="home-2" class="home home-right yellow">
+                    <div class="white-circle">
+                        <div class="circles-row circles-row-top">
+                            <div class="small-circle yellow"></div>
+                            <div class="small-circle yellow"></div>
+                        </div>
+                        <div class="circles-row circles-row-bottom">
+                            <div class="small-circle yellow"></div>
+                            <div class="small-circle yellow"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
