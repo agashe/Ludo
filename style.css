@@ -46,6 +46,15 @@
 .home-right {
     float: right;
 }
+.home span {
+    margin: 5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    font-style: italic;
+    text-shadow: 1px 1px #ffffff;
+    float: left;
+}
 
 .white-circle {
     box-sizing: border-box;
@@ -76,6 +85,15 @@
     border: 1px solid #000000;
     border-radius: 100%;
     float: left;
+}
+.xsmall-circle {
+    box-sizing: border-box;
+    height: 75%;
+    width: 75%;
+    margin: 5px auto;
+    background-color: #9c9a9a;
+    border: 1px solid #000000;
+    border-radius: 100%;
 }
 
 .track {
@@ -151,4 +169,38 @@
 }
 .tile-h {
     width: 16.6667%;
+}
+
+.start-arrow-top {
+    height: 0;
+    width: 0;
+    margin: 8px auto;
+    border-right: 15px solid transparent;
+    border-bottom: 18px solid blue;
+    border-left: 15px solid transparent;
+}
+.start-arrow-right {
+    height: 0;
+    width: 0;
+    margin: 2px;
+    margin-left: 10px;
+    border-top: 15px solid transparent;
+    border-left: 18px solid red;
+    border-bottom: 15px solid transparent;
+}
+.start-arrow-bottom {
+    height: 0;
+    width: 0;
+    margin: 10px auto;
+    border-right: 15px solid transparent;
+    border-top: 18px solid green;
+    border-left: 15px solid transparent;
+}
+.start-arrow-left {
+    height: 0;
+    width: 0;
+    margin: 2px 5px;
+    border-top: 15px solid transparent;
+    border-right: 18px solid yellow;
+    border-bottom: 15px solid transparent;
 }
