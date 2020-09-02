@@ -97,6 +97,40 @@
     border: 1px solid #000000;
     float: left;
 }
+.finish-point {
+    box-sizing: border-box;
+    height: 0;
+    width: 0;
+}
+.finish-point-top {
+    border-right: 54px solid transparent;
+    border-bottom: 55px solid blue;
+    border-left: 54px solid transparent;
+    position: relative;
+    top: -110px;
+    left: 0px;
+}
+.finish-point-right {
+    border-top: 54px solid transparent;
+    border-right: 55px solid yellow;
+    border-bottom: 54px solid transparent;
+    position: relative;
+    top: -55px;
+    right: -54px;
+}
+.finish-point-bottom {
+    border-right: 54px solid transparent;
+    border-top: 55px solid green;
+    border-left: 54px solid transparent;
+}
+.finish-point-left {
+    border-top: 54px solid transparent;
+    border-bottom: 55px solid transparent;
+    border-left: 54px solid red;
+    position: relative;
+    top: -219px;
+    left: 0px;
+}
 
 /* ************************************************** */
 
