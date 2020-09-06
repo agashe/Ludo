@@ -3,6 +3,11 @@
     padding: 0;
 }
 
+body {
+    background: rgb(2,0,36);
+    background: radial-gradient(circle, rgba(2,0,36,1) 10%, rgba(0,212,255,1) 74%, rgba(9,9,121,1) 90%);
+}
+
 .blue {
     background-color: blue;
 }
@@ -21,7 +26,8 @@
 .board {
     height: 550px;
     width: 550px;
-    margin: 25px auto;
+    margin: 40px auto;
+    background-color: #ffffff;
     border: 2px solid #000000;
 }
 
@@ -161,8 +167,8 @@
     box-sizing: border-box;
     height: 100%;
     width: 33.3333%;
-    float: left;
     border: 1px solid #000000;
+    float: left;
 }
 .tiles-row-horizontal {
     height: 33.3333%;
