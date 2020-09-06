@@ -6,6 +6,7 @@
 body {
     background: rgb(2,0,36);
     background: radial-gradient(circle, rgba(2,0,36,1) 10%, rgba(0,212,255,1) 74%, rgba(9,9,121,1) 90%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .blue {
@@ -54,7 +55,6 @@ body {
 }
 .home span {
     margin: 5px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 1em;
     font-weight: bold;
     font-style: italic;
@@ -209,4 +209,88 @@ body {
     border-top: 15px solid transparent;
     border-right: 18px solid yellow;
     border-bottom: 15px solid transparent;
+}
+
+/* ************************************************** */
+
+#player-box {
+    height: 100px;
+    width: 200px;
+    margin: 40px;
+    border: 3px solid #000000;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+}
+#player-box .name {
+    box-sizing: border-box;
+    border-bottom: 3px solid #000000;
+    font-size: 1em;
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    text-shadow: 1px 1px #ffffff;
+    padding: 3px;
+}
+#player-box .bottom-body {
+    height: 70%;
+    clear: both;
+}
+#player-box .bottom-body .dice-box {
+    box-sizing: border-box;
+    height: 100%;
+    width: 50%;
+    padding: 9px;
+    float: left;
+}
+#player-box .bottom-body .dice-box .dice {
+    box-sizing: border-box;
+    height: 50px;
+    width: 50px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 3px#cecdcd outset;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px 1px #000000;
+    font-family: cursive;
+    font-size: 1.3em;
+    text-align: center;
+    font-weight: bold;
+}
+#player-box .bottom-body .dice-box .dice .xsmall-circle {
+    background-color: #ffffff;
+    margin: 6px auto;
+}
+#player-box .bottom-body .timer {
+    box-sizing: border-box;
+    height: 100%;
+    width: 50%;
+    background-color: #ffffff;
+    border-left: 3px solid #000000;
+    font-family: fantasy;
+    font-size: 3.5em;
+    text-align: center;
+    font-weight: bold;
+    float: right;
+}
+
+/* ************************************************** */
+
+#about {
+    height: 20px;
+    width: 150px;
+    margin: 40px;
+    padding: 5px;
+    background-color: #ffffff;
+    border: 3px solid #000000;
+    border-radius: 20px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+#about a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #000000;
 }
