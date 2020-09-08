@@ -214,6 +214,19 @@ body {
 
 /* ************************************************** */
 
+.token {
+    box-sizing: border-box;
+    height: 25px;
+    width: 25px;
+    margin: 6px auto;
+    border: 3px#cecdcd outset;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px 1px #000000;
+    transform: rotate(45deg);
+}
+
+/* ************************************************** */
+
 #player-box {
     height: 100px;
     width: 200px;
