@@ -6,6 +6,7 @@
  */
 
 /* ***** Define Basic Elements & Flags ***** */
+var mainLoop = 0;
 var current  = 0;
 var winner   = false;
 var players  = [];
@@ -17,7 +18,7 @@ const tilesTypes = {
     start    : 1,
     toFinish : 2,
     finish   : 3,
-    stop     : 4,
+    safe     : 4,
 };
 
 const playersTypes = {
@@ -43,13 +44,17 @@ var Token = function(selector, location){
     this.location = location;
 };
 
-var Player = function(name, type, home, color, finish, tokens){
+var Player = function(name, type, home, color, finish, tokens, startTile, toFinishTile, activeToken){
     this.name   = name;
     this.type   = type;
     this.home   = home;
     this.color  = color;
     this.finish = finish;
     this.tokens = tokens;
+    
+    this.startTile    = startTile;
+    this.toFinishTile = toFinishTile;
+    this.activeToken  = activeToken;
 };
 
 
@@ -68,7 +73,7 @@ function initGame(){
 
     // Green Track
     tiles[5].type  = tilesTypes.start;
-    tiles[6].type  = tilesTypes.stop;
+    tiles[6].type  = tilesTypes.safe;
     tiles[1].type  = tilesTypes.toFinish;
     
     tiles[4].type  = tilesTypes.finish;
@@ -79,7 +84,7 @@ function initGame(){
     
     // Yellow Track
     tiles[34].type = tilesTypes.start;
-    tiles[21].type = tilesTypes.stop;
+    tiles[21].type = tilesTypes.safe;
     tiles[29].type = tilesTypes.toFinish;
     
     tiles[24].type = tilesTypes.finish;
@@ -90,7 +95,7 @@ function initGame(){
     
     // Blue Track
     tiles[48].type = tilesTypes.start;
-    tiles[47].type = tilesTypes.stop;
+    tiles[47].type = tilesTypes.safe;
     tiles[52].type = tilesTypes.toFinish;
     
     tiles[37].type = tilesTypes.finish;
@@ -101,7 +106,7 @@ function initGame(){
     
     // Red Track
     tiles[55].type = tilesTypes.start;
-    tiles[60].type = tilesTypes.stop;
+    tiles[60].type = tilesTypes.safe;
     tiles[68].type = tilesTypes.toFinish;
     
     tiles[61].type = tilesTypes.finish;
@@ -113,32 +118,32 @@ function initGame(){
     
     // Initialize Players
     players[0] = new Player('PLAYER', playersTypes.human, '#player-home', playersColors.blue, '#player-finish', [
-        new Token('#player-token1', '#player-home-p1'),
-        new Token('#player-token2', '#player-home-p2'),
-        new Token('#player-token3', '#player-home-p3'),
-        new Token('#player-token4', '#player-home-p4'),
-    ]);
+        new Token('#player-token1'),
+        new Token('#player-token2'),
+        new Token('#player-token3'),
+        new Token('#player-token4'),
+    ], 48, 52, false);
     
     players[1] = new Player('COM #1', playersTypes.computer, '#com1-home', playersColors.red, '#com1-finish', [
-        new Token('#com1-token1', '#com1-home-p1'),
-        new Token('#com1-token2', '#com1-home-p2'),
-        new Token('#com1-token3', '#com1-home-p3'),
-        new Token('#com1-token4', '#com1-home-p4'),
-    ]);
+        new Token('#com1-token1'),
+        new Token('#com1-token2'),
+        new Token('#com1-token3'),
+        new Token('#com1-token4'),
+    ], 55, 68, false);
     
     players[2] = new Player('COM #2', playersTypes.computer, '#com2-home', playersColors.green, '#com2-finish', [
-        new Token('#com2-token1', '#com2-home-p1'),
-        new Token('#com2-token2', '#com2-home-p2'),
-        new Token('#com2-token3', '#com2-home-p3'),
-        new Token('#com2-token4', '#com2-home-p4'),
-    ]);
+        new Token('#com2-token1'),
+        new Token('#com2-token2'),
+        new Token('#com2-token3'),
+        new Token('#com2-token4'),
+    ], 5, 1, false);
     
     players[3] = new Player('COM #3', playersTypes.computer, '#com3-home', playersColors.yellow, '#com3-finish', [
-        new Token('#com3-token1', '#com3-home-p1'),
-        new Token('#com3-token2', '#com3-home-p2'),
-        new Token('#com3-token3', '#com3-home-p3'),
-        new Token('#com3-token4', '#com3-home-p4'),
-    ]);
+        new Token('#com3-token1'),
+        new Token('#com3-token2'),
+        new Token('#com3-token3'),
+        new Token('#com3-token4'),
+    ], 34, 29, false);
 }
 
 function random(min, max){
@@ -174,13 +179,41 @@ function rollDice(){
     }, 150);
 }
 
-function setPlayer(id){
-    $('#player-box .name').html(players[id].name);
+function setPlayer(){
+    $('#player-box .name').html(players[current].name);
     $('#player-box .name').removeClass(playersColors.blue+' '+
         playersColors.red+' '+
         playersColors.green+' '+
         playersColors.yellow);
-    $('#player-box .name').addClass(players[id].color);
+    $('#player-box .name').addClass(players[current].color);    
+}
+
+function handleComputerTurn(){
+    var activeToken = false;
+    if (players[current].activeToken === false) {
+        if (dice > 1) {
+            activeToken = 0
+            players[current].activeToken = activeToken;
+
+            $(players[current].tokens[activeToken].selector).appendTo('#t-' + players[current].startTile);
+        }
+    } else {
+        //relax
+    }
+}
+
+function decideNextPlayer(){
+    if (current == 3) {
+        current = 0;
+    } else {
+        current += 1;
+    }
+}
+
+function checkWinner(){
+    if (winner !== false) {
+        clearInterval(mainLoop);
+    }
 }
 
 /* ***** Main Loop ***** */
@@ -189,26 +222,26 @@ $(document).ready(function(){
 
     // First Turn
     setTimeout(function(){
-        setPlayer(current);
+        setPlayer();
         rollDice();
         playerTimer();
-        current += 1;
+        decideNextPlayer();
     }, 1000);
 
     // The Main Loop
-    var mainLoop = setInterval(function(){
-        setPlayer(current);
+    mainLoop = setInterval(function(){
+        checkWinner();
+
+        setPlayer();
         rollDice();
         playerTimer();
 
-        if (current == 3) {
-            current = 0;
+        if (current == 0) {
+            // player action
         } else {
-            current += 1;
+            handleComputerTurn();
         }
 
-        if (winner !== false) {
-            clearInterval(mainLoop);
-        }
+        decideNextPlayer();
     }, 12000);
 });
