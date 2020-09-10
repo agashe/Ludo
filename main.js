@@ -6,7 +6,7 @@
  */
 
 /* ***** Define Basic Elements & Flags ***** */
-var counter  = 0;
+var current  = 0;
 var winner   = 0;
 var players  = [];
 var tiles    = [];
@@ -26,10 +26,10 @@ const playersTypes = {
 };
 
 const playersColors = {
-    blue   : 0,
-    red    : 1,
-    green  : 2,
-    yellow : 3,
+    blue   : 'blue',
+    red    : 'red',
+    green  : 'green',
+    yellow : 'yellow',
 };
 
 var Tile = function(selector, type, color){
@@ -43,7 +43,8 @@ var Token = function(selector, location){
     this.location = location;
 };
 
-var Player = function(type, home, color, finish, tokens){
+var Player = function(name, type, home, color, finish, tokens){
+    this.name   = name;
     this.type   = type;
     this.home   = home;
     this.color  = color;
@@ -111,28 +112,28 @@ function initGame(){
 
     
     // Initialize Players
-    players[0] = new Player(playersTypes.human, '#player-home', playersColors.blue, '#player-finish', [
+    players[0] = new Player('PLAYER', playersTypes.human, '#player-home', playersColors.blue, '#player-finish', [
         new Token('#player-token1', '#player-home-p1'),
         new Token('#player-token2', '#player-home-p2'),
         new Token('#player-token3', '#player-home-p3'),
         new Token('#player-token4', '#player-home-p4'),
     ]);
     
-    players[1] = new Player(playersTypes.computer, '#com1-home', playersColors.red, '#com1-finish', [
+    players[1] = new Player('COM #1', playersTypes.computer, '#com1-home', playersColors.red, '#com1-finish', [
         new Token('#com1-token1', '#com1-home-p1'),
         new Token('#com1-token2', '#com1-home-p2'),
         new Token('#com1-token3', '#com1-home-p3'),
         new Token('#com1-token4', '#com1-home-p4'),
     ]);
     
-    players[2] = new Player(playersTypes.computer, '#com2-home', playersColors.green, '#com2-finish', [
+    players[2] = new Player('COM #2', playersTypes.computer, '#com2-home', playersColors.green, '#com2-finish', [
         new Token('#com2-token1', '#com2-home-p1'),
         new Token('#com2-token2', '#com2-home-p2'),
         new Token('#com2-token3', '#com2-home-p3'),
         new Token('#com2-token4', '#com2-home-p4'),
     ]);
     
-    players[3] = new Player(playersTypes.computer, '#com3-home', playersColors.yellow, '#com3-finish', [
+    players[3] = new Player('COM #3', playersTypes.computer, '#com3-home', playersColors.yellow, '#com3-finish', [
         new Token('#com3-token1', '#com3-home-p1'),
         new Token('#com3-token2', '#com3-home-p2'),
         new Token('#com3-token3', '#com3-home-p3'),
@@ -140,11 +141,56 @@ function initGame(){
     ]);
 }
 
+function random(min, max){
+    return Math.floor(Math.random() * max) + min;
+}
+
+function playerTimer(){
+    var counter  = 10;
+    var timer = setInterval(function(){
+        $('.timer').html(counter);
+
+        if (counter == 0) {
+            clearInterval(timer);
+        } else {
+            counter -= 1;
+        }
+    }, 1000);
+}
+
+function rollDice(){
+    var counter  = 10;
+    dice = random(1, 6);
+    var timer = setInterval(function(){
+        $('.dice .xsmall-circle').html(random(1, 6)); // just generate some values!!
+
+        if (counter == 0) {
+            clearInterval(timer);
+            $('.dice .xsmall-circle').html(dice);
+        } else {
+            counter -= 1;
+        }
+    }, 150);
+}
+
+function setPlayer(id){
+    $('#player-box .name').html(players[id].name);
+    $('#player-box .name').removeClass(playersColors.blue+' '+
+        playersColors.red+' '+
+        playersColors.green+' '+
+        playersColors.yellow);
+    $('#player-box .name').addClass(players[id].color);
+}
 
 /* ***** Main Loop ***** */
 $(document).ready(function(){
     initGame();
-    // while (!winner) {
+    
+    setPlayer(current);
+    rollDice();
+    playerTimer();
 
+    // while (!winner) {
+        
     // }
 });
