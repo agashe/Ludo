@@ -6,8 +6,9 @@
  */
 
 /* ***** Define Basic Elements & Flags ***** */
+var counter  = 10;
 var current  = 0;
-var winner   = 0;
+var winner   = false;
 var players  = [];
 var tiles    = [];
 var dice     = 1;
@@ -146,7 +147,6 @@ function random(min, max){
 }
 
 function playerTimer(){
-    var counter  = 10;
     var timer = setInterval(function(){
         $('.timer').html(counter);
 
@@ -185,12 +185,28 @@ function setPlayer(id){
 /* ***** Main Loop ***** */
 $(document).ready(function(){
     initGame();
-    
-    setPlayer(current);
-    rollDice();
-    playerTimer();
 
-    // while (!winner) {
-        
-    // }
+    while (counter != 0) {
+        if (counter == 10) {
+            setPlayer(current);
+            rollDice();
+            playerTimer();
+        }
+        else if (counter == 0) {
+            if (winner !== false) {
+                break;
+            }
+            else {
+                counter = 10;
+                if (current == 3) {
+                    current = 0;
+                } else {
+                    current += 1;
+                }
+            } 
+        }
+        else {
+            continue;
+        }
+    }
 });
