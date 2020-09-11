@@ -61,60 +61,88 @@ var Player = function(name, type, home, color, finish, tokens, startTile, toFini
 /* ***** Actions & Processing ***** */
 function initGame(){
     // Initialize The Game Board
-    var i = 0, color = 0;
+    var i = 0, type = '', color = 0;
     for (i = 0;i < 72;i++) {
-        if (i >= 0 && i < 18)      color = playersColors.green;
-        else if (i >= 18 && i < 36) color = playersColors.yellow;
-        else if (i >= 36 && i < 54) color = playersColors.blue;
-        else if (i >= 54 && i < 72) color = playersColors.red;
+        // Red Track
+        if (i == 1) {
+            type  = tilesTypes.start;
+            color = playersColors.red;
+        }
+        else if (i == 48) {
+            type  = tilesTypes.safe;
+            color = playersColors.red;
+        }
+        else if (i == 51) {
+            type  = tilesTypes.toFinish;
+            color = playersColors.red;
+        }
+        else if (i >= 52 && i <=56) {
+            type  = tilesTypes.finish;
+            color = playersColors.red;
+        }
         
-        tiles.push(new Tile(('#t-' + i), tilesTypes.normal, color));
+        // Green Track
+        else if (i == 14) {
+            type  = tilesTypes.start;
+            color = playersColors.green;
+        }
+        else if (i == 9) {
+            type  = tilesTypes.safe;
+            color = playersColors.green;
+        }
+        else if (i == 12) {
+            type  = tilesTypes.toFinish;
+            color = playersColors.green;
+        }
+        else if (i >= 57 && i <=61) {
+            type  = tilesTypes.finish;
+            color = playersColors.green;
+        }
+        
+        // Yellow Track
+        else if (i == 27) {
+            type  = tilesTypes.start;
+            color = playersColors.yellow;
+        }
+        else if (i == 21) {
+            type  = tilesTypes.safe;
+            color = playersColors.yellow;
+        }
+        else if (i == 25) {
+            type  = tilesTypes.toFinish;
+            color = playersColors.yellow;
+        }
+        else if (i >= 62 && i <= 66) {
+            type  = tilesTypes.finish;
+            color = playersColors.yellow;
+        }
+
+        // Blue Track
+        else if (i == 40) {
+            type  = tilesTypes.start;
+            color = playersColors.blue;
+        }
+        else if (i == 35) {
+            type  = tilesTypes.safe;
+            color = playersColors.blue;
+        }
+        else if (i == 38) {
+            type  = tilesTypes.toFinish;
+            color = playersColors.blue;
+        }
+        else if (i >= 67 && i <= 71) {
+            type  = tilesTypes.finish;
+            color = playersColors.blue;
+        }
+
+        // Defualt
+        else {
+            type  = tilesTypes.normal;
+            color = '';
+        }
+
+        tiles.push(new Tile(('#t-' + i), type, color));
     }
-
-    // Green Track
-    tiles[5].type  = tilesTypes.start;
-    tiles[6].type  = tilesTypes.safe;
-    tiles[1].type  = tilesTypes.toFinish;
-    
-    tiles[4].type  = tilesTypes.finish;
-    tiles[7].type  = tilesTypes.finish;
-    tiles[10].type = tilesTypes.finish;
-    tiles[13].type = tilesTypes.finish;
-    tiles[16].type = tilesTypes.finish;
-    
-    // Yellow Track
-    tiles[34].type = tilesTypes.start;
-    tiles[21].type = tilesTypes.safe;
-    tiles[29].type = tilesTypes.toFinish;
-    
-    tiles[24].type = tilesTypes.finish;
-    tiles[25].type = tilesTypes.finish;
-    tiles[26].type = tilesTypes.finish;
-    tiles[27].type = tilesTypes.finish;
-    tiles[28].type = tilesTypes.finish;
-    
-    // Blue Track
-    tiles[48].type = tilesTypes.start;
-    tiles[47].type = tilesTypes.safe;
-    tiles[52].type = tilesTypes.toFinish;
-    
-    tiles[37].type = tilesTypes.finish;
-    tiles[40].type = tilesTypes.finish;
-    tiles[43].type = tilesTypes.finish;
-    tiles[46].type = tilesTypes.finish;
-    tiles[49].type = tilesTypes.finish;
-    
-    // Red Track
-    tiles[55].type = tilesTypes.start;
-    tiles[60].type = tilesTypes.safe;
-    tiles[68].type = tilesTypes.toFinish;
-    
-    tiles[61].type = tilesTypes.finish;
-    tiles[62].type = tilesTypes.finish;
-    tiles[63].type = tilesTypes.finish;
-    tiles[64].type = tilesTypes.finish;
-    tiles[65].type = tilesTypes.finish;
-
     
     // Initialize Players
     players[0] = new Player('PLAYER', playersTypes.human, '#player-home', playersColors.blue, '#player-finish', [
@@ -122,28 +150,28 @@ function initGame(){
         new Token('#player-token2'),
         new Token('#player-token3'),
         new Token('#player-token4'),
-    ], 48, 52, false);
+    ], 40, 38, false);
     
     players[1] = new Player('COM #1', playersTypes.computer, '#com1-home', playersColors.red, '#com1-finish', [
         new Token('#com1-token1'),
         new Token('#com1-token2'),
         new Token('#com1-token3'),
         new Token('#com1-token4'),
-    ], 55, 68, false);
+    ], 1, 51, false);
     
     players[2] = new Player('COM #2', playersTypes.computer, '#com2-home', playersColors.green, '#com2-finish', [
         new Token('#com2-token1'),
         new Token('#com2-token2'),
         new Token('#com2-token3'),
         new Token('#com2-token4'),
-    ], 5, 1, false);
+    ], 14, 12, false);
     
     players[3] = new Player('COM #3', playersTypes.computer, '#com3-home', playersColors.yellow, '#com3-finish', [
         new Token('#com3-token1'),
         new Token('#com3-token2'),
         new Token('#com3-token3'),
         new Token('#com3-token4'),
-    ], 34, 29, false);
+    ], 27, 25, false);
 }
 
 function tileSelector(id){
@@ -191,6 +219,20 @@ function rollDice(){
     }, 150);
 }
 
+function moveToken(token, location){
+    var counter  = 2;
+    var timer = setInterval(function(){
+        $('.timer').html(counter);
+
+        if (counter == 0) {
+            clearInterval(timer);
+        } else {
+            counter -= 1;
+        }
+    }, 1000);
+    // $('.timer').html('10');
+}
+
 function setPlayer(){
     $('#player-box .name').html(players[current].name);
     $('#player-box .name').removeClass(playersColors.blue+' '+
@@ -202,7 +244,7 @@ function setPlayer(){
 }
 
 function handleHumanPlayerTurn(){
-    
+    return;
 }
 
 function handleComputerPlayerTurn(){
@@ -220,6 +262,12 @@ function handleComputerPlayerTurn(){
     } else {
         activeToken = players[current].activeToken;
         newLocation = players[current].tokens[activeToken].location + dice;
+
+        // new location conditions :
+        // 1. if we reached 50 and not my toFinish  , reset to 0!!
+        // 2. safe points --> append inside the circle !!
+        // 3. function to move step by step --> moveToken(activeToken, newLocation) !!
+
         players[current].tokens[activeToken].location = newLocation;
         $(players[current].tokens[activeToken].selector).appendTo(tileSelector(newLocation));
     }
