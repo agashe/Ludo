@@ -146,12 +146,16 @@ function initGame(){
     ], 34, 29, false);
 }
 
+function tileSelector(id){
+    return '#t-' + id;
+}
+
 function random(min, max){
     return Math.floor(Math.random() * max) + min;
 }
 
 function playerTimer(){
-    var counter  = 10;
+    var counter  = 2;
     var timer = setInterval(function(){
         $('.timer').html(counter);
 
@@ -161,7 +165,7 @@ function playerTimer(){
             counter -= 1;
         }
     }, 1000);
-    $('.timer').html('10');
+    // $('.timer').html('10');
 }
 
 function rollDice(){
@@ -173,6 +177,14 @@ function rollDice(){
         if (counter == 0) {
             clearInterval(timer);
             $('.dice .xsmall-circle').html(dice);
+
+            if (current == 0) {
+                handleHumanPlayerTurn();
+            } else {
+                handleComputerPlayerTurn();
+            }
+
+            decideNextPlayer();
         } else {
             counter -= 1;
         }
@@ -186,19 +198,30 @@ function setPlayer(){
         playersColors.green+' '+
         playersColors.yellow);
     $('#player-box .name').addClass(players[current].color);    
+    playerTimer();
 }
 
-function handleComputerTurn(){
+function handleHumanPlayerTurn(){
+    
+}
+
+function handleComputerPlayerTurn(){
     var activeToken = false;
+    var newLocation = false;
+
     if (players[current].activeToken === false) {
-        if (dice > 1) {
-            activeToken = 0
+        if (dice == 6 || dice == 1) {
+            activeToken = 0;
             players[current].activeToken = activeToken;
 
-            $(players[current].tokens[activeToken].selector).appendTo('#t-' + players[current].startTile);
+            players[current].tokens[activeToken].location = players[current].startTile;
+            $(players[current].tokens[activeToken].selector).appendTo(tileSelector(players[current].startTile));
         }
     } else {
-        //relax
+        activeToken = players[current].activeToken;
+        newLocation = players[current].tokens[activeToken].location + dice;
+        players[current].tokens[activeToken].location = newLocation;
+        $(players[current].tokens[activeToken].selector).appendTo(tileSelector(newLocation));
     }
 }
 
@@ -224,8 +247,6 @@ $(document).ready(function(){
     setTimeout(function(){
         setPlayer();
         rollDice();
-        playerTimer();
-        decideNextPlayer();
     }, 1000);
 
     // The Main Loop
@@ -234,14 +255,5 @@ $(document).ready(function(){
 
         setPlayer();
         rollDice();
-        playerTimer();
-
-        if (current == 0) {
-            // player action
-        } else {
-            handleComputerTurn();
-        }
-
-        decideNextPlayer();
-    }, 12000);
+    }, 5000);
 });
