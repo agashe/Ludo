@@ -219,18 +219,38 @@ function rollDice(){
     }, 150);
 }
 
-function moveToken(token, location){
-    var counter  = 2;
-    var timer = setInterval(function(){
-        $('.timer').html(counter);
+function moveToken(currentPlayer, token, distination){
+    var source = players[currentPlayer].tokens[token].location;
 
-        if (counter == 0) {
+    var moves = 0;
+    if (source > distination) {
+        moves  = distination - (source - 52);
+    } else {
+        moves  = distination - source;
+    }
+
+    var timer = setInterval(function(){
+        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+
+        // fix glitch : for xsmall-circle , and toFinish triangles !!
+        if (tiles[source].type == tilesTypes.safe || tiles[source].type == tilesTypes.toFinish) {
+            $(players[currentPlayer].tokens[token].selector).css('top', '-33px');
+        } else {
+            $(players[currentPlayer].tokens[token].selector).css('top', '-2px');
+        }
+
+        if (moves == 0) {
             clearInterval(timer);
         } else {
-            counter -= 1;
+            moves -= 1;
+            
+            if (source == 51) {
+                source = 0;
+            } else {
+                source = source + 1;
+            }
         }
-    }, 1000);
-    // $('.timer').html('10');
+    }, 500);
 }
 
 function setPlayer(){
@@ -252,24 +272,27 @@ function handleComputerPlayerTurn(){
     var newLocation = false;
 
     if (players[current].activeToken === false) {
-        if (dice == 6 || dice == 1) {
+        if (dice > 1) {
             activeToken = 0;
             players[current].activeToken = activeToken;
 
             players[current].tokens[activeToken].location = players[current].startTile;
             $(players[current].tokens[activeToken].selector).appendTo(tileSelector(players[current].startTile));
+            $(players[current].tokens[activeToken].selector).css('top', '-2px');
         }
     } else {
         activeToken = players[current].activeToken;
         newLocation = players[current].tokens[activeToken].location + dice;
 
-        // new location conditions :
-        // 1. if we reached 50 and not my toFinish  , reset to 0!!
-        // 2. safe points --> append inside the circle !!
-        // 3. function to move step by step --> moveToken(activeToken, newLocation) !!
+        // if the token reached the tile number 50 , continue !
+        if (newLocation > 51 && 
+            tiles[newLocation].type != tilesTypes.toFinish && 
+            tiles[newLocation].color != players[current].tokens[activeToken].color) {
+                newLocation = newLocation - 52;
+        }
 
+        moveToken(current, activeToken, newLocation);
         players[current].tokens[activeToken].location = newLocation;
-        $(players[current].tokens[activeToken].selector).appendTo(tileSelector(newLocation));
     }
 }
 

@@ -107,6 +107,8 @@ body {
     background-color: #9c9a9a;
     border: 1px solid #000000;
     border-radius: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .track {
@@ -229,6 +231,8 @@ body {
     border-radius: 5px;
     box-shadow: 1px 1px 1px 1px #000000;
     transform: rotate(45deg);
+    position: relative;
+    z-index: 100000;
 }
 
 /* ************************************************** */
