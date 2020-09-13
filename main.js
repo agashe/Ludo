@@ -195,11 +195,12 @@ function playerTimer(){
 
         if (counter == 0) {
             clearInterval(timer);
+            decideNextPlayer();
         } else {
             counter -= 1;
         }
     }, 1000);
-    // $('.timer').html('10');
+    $('.timer').html('2');
 }
 
 function rollDice(){
@@ -286,8 +287,6 @@ function handleHumanPlayerTurn(selectedToken){
             moveToken(current, selectedToken, newLocation);
             players[current].tokens[selectedToken].location = newLocation;
         }
-
-        decideNextPlayer();
     }
 }
 
@@ -318,8 +317,6 @@ function handleComputerPlayerTurn(){
         moveToken(current, activeToken, newLocation);
         players[current].tokens[activeToken].location = newLocation;
     }
-
-    decideNextPlayer();
 }
 
 function decideNextPlayer(){
@@ -328,6 +325,7 @@ function decideNextPlayer(){
     } else {
         current += 1;
     }
+    console.log(current);
 }
 
 function checkWinner(){
@@ -340,12 +338,10 @@ function checkWinner(){
 /* ***** Main Loop ***** */
 $(document).ready(function(){
     initGame();
-
+    
     // First Turn
-    setTimeout(function(){
-        setPlayer();
-        rollDice();
-    }, 1000);
+    setPlayer();
+    rollDice();
 
     // The Main Loop
     mainLoop = setInterval(function(){
@@ -353,10 +349,15 @@ $(document).ready(function(){
 
         setPlayer();
         rollDice();
+        clicked = 0;
     }, 5000);
 
     // Human Player Handler
+    var clicked = 0;
     $('[id^=player-token]').click(function(){
-        handleHumanPlayerTurn(getTokenID($(this).attr('id')));
+        if (clicked == 0) {
+            handleHumanPlayerTurn(getTokenID($(this).attr('id')));
+            clicked = 1;
+        }
     });
 });
