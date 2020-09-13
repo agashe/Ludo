@@ -325,7 +325,6 @@ function decideNextPlayer(){
     } else {
         current += 1;
     }
-    console.log(current);
 }
 
 function checkWinner(){

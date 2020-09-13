@@ -135,6 +135,14 @@ body {
     height: 0;
     width: 0;
 }
+.finish-point span {
+    display: inline-block;
+    margin: 5px auto;
+    font-size: 2.5em;
+    font-weight: bold;
+    font-style: italic;
+    text-shadow: 1px 1px #ffffff;
+}
 .finish-point-top {
     border-right: 54px solid transparent;
     border-bottom: 55px solid blue;
@@ -142,6 +150,11 @@ body {
     position: relative;
     top: -110px;
     left: 0px;
+}
+.finish-point-top span {
+    position: relative;
+    top: -2px;
+    right: 12px;
 }
 .finish-point-right {
     border-top: 54px solid transparent;
@@ -151,10 +164,20 @@ body {
     top: -55px;
     right: -54px;
 }
+.finish-point-right span {
+    position: relative;
+    top: -36px;
+    left: 21px;
+}
 .finish-point-bottom {
     border-right: 54px solid transparent;
     border-top: 55px solid green;
     border-left: 54px solid transparent;
+}
+.finish-point-bottom span {
+    position: relative;
+    top: -66px;
+    right: 11px;
 }
 .finish-point-left {
     border-top: 54px solid transparent;
@@ -163,6 +186,11 @@ body {
     position: relative;
     top: -219px;
     left: 0px;
+}
+.finish-point-left span {
+    position: relative;
+    top: -36px;
+    right: 46px;
 }
 
 /* ************************************************** */
