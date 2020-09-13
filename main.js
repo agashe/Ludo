@@ -44,7 +44,7 @@ var Token = function(selector, location){
     this.location = location;
 };
 
-var Player = function(name, type, home, color, finish, tokens, startTile, toFinishTile, activeToken){
+var Player = function(name, type, home, color, finish, tokens, startTile, toFinishTile, firstFinishTile, activeToken){
     this.name   = name;
     this.type   = type;
     this.home   = home;
@@ -52,9 +52,10 @@ var Player = function(name, type, home, color, finish, tokens, startTile, toFini
     this.finish = finish;
     this.tokens = tokens;
     
-    this.startTile    = startTile;
-    this.toFinishTile = toFinishTile;
-    this.activeToken  = activeToken;
+    this.startTile       = startTile;
+    this.toFinishTile    = toFinishTile;
+    this.firstFinishTile = firstFinishTile;
+    this.activeToken     = activeToken;
 };
 
 
@@ -150,28 +151,28 @@ function initGame(){
         new Token('#player-token2', false),
         new Token('#player-token3', false),
         new Token('#player-token4', false),
-    ], 40, 38, false);
+    ], 40, 38, 67, false);
     
     players[1] = new Player('COM #1', playersTypes.computer, '#com1-home', playersColors.red, '#com1-finish', [
         new Token('#com1-token1', false),
         new Token('#com1-token2', false),
         new Token('#com1-token3', false),
         new Token('#com1-token4', false),
-    ], 1, 51, false);
+    ], 1, 51, 52, false);
     
     players[2] = new Player('COM #2', playersTypes.computer, '#com2-home', playersColors.green, '#com2-finish', [
         new Token('#com2-token1', false),
         new Token('#com2-token2', false),
         new Token('#com2-token3', false),
         new Token('#com2-token4', false),
-    ], 14, 12, false);
+    ], 14, 12, 57, false);
     
     players[3] = new Player('COM #3', playersTypes.computer, '#com3-home', playersColors.yellow, '#com3-finish', [
         new Token('#com3-token1', false),
         new Token('#com3-token2', false),
         new Token('#com3-token3', false),
         new Token('#com3-token4', false),
-    ], 27, 25, false);
+    ], 27, 25, 62, false);
 }
 
 function tileSelector(id){
@@ -256,6 +257,38 @@ function moveToken(currentPlayer, token, distination){
     }, 500);
 }
 
+function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
+    var source = currentLocation;
+    var moves  = players[currentPlayer].toFinishTile - currentLocation;
+    moves += distination - players[currentPlayer].firstFinishTile;
+    console.log('moves: ' + moves);
+    
+    // first: move the token to the toFinishTile!
+    // second: move the token inside the finish tiles
+    // if there're avilable moves to do on them !!
+    var timer = setInterval(function(){
+        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+
+        if (tiles[source].type == tilesTypes.safe || tiles[source].type == tilesTypes.toFinish) {
+            $(players[currentPlayer].tokens[token].selector).css('top', '-33px');
+        } else {
+            $(players[currentPlayer].tokens[token].selector).css('top', '-2px');
+        }
+    
+        if (moves == 0) {
+            clearInterval(timer);
+        } else {
+            moves -= 1;
+
+            if (source == players[currentPlayer].toFinishTile) {
+                source = players[currentPlayer].firstFinishTile;
+            } else {
+                source = source + 1;
+            }
+        }
+    }, 500);
+}
+
 function setPlayer(){
     $('#player-box .name').html(players[current].name);
     $('#player-box .name').removeClass(playersColors.blue+' '+
@@ -267,24 +300,37 @@ function setPlayer(){
 }
 
 function handleHumanPlayerTurn(selectedToken){
+    var moveToFinish = false;
     if (current == 0) {
         if (players[current].tokens[selectedToken].location == false) {
             if (dice > 1) {
-                players[current].tokens[selectedToken].location = players[current].startTile;
-                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
+                players[current].tokens[selectedToken].location = 32;//players[current].startTile;
+                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(32));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
 
+            // if the token reached my toFinish tile
+            if (newLocation > players[current].toFinishTile) {
+                    newLocation = (newLocation - players[current].toFinishTile);
+                    newLocation += players[current].firstFinishTile;
+                    moveToFinish = true;
+            }
+
             // if the token reached the tile number 50 , continue !
             if (newLocation > 51 && 
                 tiles[newLocation].type != tilesTypes.toFinish && 
-                tiles[newLocation].color != players[current].tokens[selectedToken].color) {
+                tiles[newLocation].color != players[current].color) {
                     newLocation = newLocation - 52;
             }
 
-            moveToken(current, selectedToken, newLocation);
+            if (moveToFinish == true) {
+                moveTokenToFinish(current, selectedToken, players[current].tokens[selectedToken].location, newLocation);
+            } else {
+                moveToken(current, selectedToken, newLocation);
+            }
+
             players[current].tokens[selectedToken].location = newLocation;
         }
     }
@@ -309,8 +355,8 @@ function handleComputerPlayerTurn(){
 
         // if the token reached the tile number 50 , continue !
         if (newLocation > 51 && 
-            tiles[newLocation].type != tilesTypes.toFinish && 
-            tiles[newLocation].color != players[current].tokens[activeToken].color) {
+            tiles[newLocation].type != tilesTypes.toFinishTile && 
+            tiles[newLocation].color != players[current].color) {
                 newLocation = newLocation - 52;
         }
 
@@ -323,7 +369,7 @@ function decideNextPlayer(){
     if (current == 3) {
         current = 0;
     } else {
-        current += 1;
+        current = 0;
     }
 }
 
