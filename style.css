@@ -231,6 +231,7 @@ body {
     border-radius: 5px;
     box-shadow: 1px 1px 1px 1px #000000;
     transform: rotate(45deg);
+    cursor: pointer;
     position: relative;
     z-index: 100000;
 }

@@ -146,31 +146,31 @@ function initGame(){
     
     // Initialize Players
     players[0] = new Player('PLAYER', playersTypes.human, '#player-home', playersColors.blue, '#player-finish', [
-        new Token('#player-token1'),
-        new Token('#player-token2'),
-        new Token('#player-token3'),
-        new Token('#player-token4'),
+        new Token('#player-token1', false),
+        new Token('#player-token2', false),
+        new Token('#player-token3', false),
+        new Token('#player-token4', false),
     ], 40, 38, false);
     
     players[1] = new Player('COM #1', playersTypes.computer, '#com1-home', playersColors.red, '#com1-finish', [
-        new Token('#com1-token1'),
-        new Token('#com1-token2'),
-        new Token('#com1-token3'),
-        new Token('#com1-token4'),
+        new Token('#com1-token1', false),
+        new Token('#com1-token2', false),
+        new Token('#com1-token3', false),
+        new Token('#com1-token4', false),
     ], 1, 51, false);
     
     players[2] = new Player('COM #2', playersTypes.computer, '#com2-home', playersColors.green, '#com2-finish', [
-        new Token('#com2-token1'),
-        new Token('#com2-token2'),
-        new Token('#com2-token3'),
-        new Token('#com2-token4'),
+        new Token('#com2-token1', false),
+        new Token('#com2-token2', false),
+        new Token('#com2-token3', false),
+        new Token('#com2-token4', false),
     ], 14, 12, false);
     
     players[3] = new Player('COM #3', playersTypes.computer, '#com3-home', playersColors.yellow, '#com3-finish', [
-        new Token('#com3-token1'),
-        new Token('#com3-token2'),
-        new Token('#com3-token3'),
-        new Token('#com3-token4'),
+        new Token('#com3-token1', false),
+        new Token('#com3-token2', false),
+        new Token('#com3-token3', false),
+        new Token('#com3-token4', false),
     ], 27, 25, false);
 }
 
@@ -180,6 +180,12 @@ function tileSelector(id){
 
 function random(min, max){
     return Math.floor(Math.random() * max) + min;
+}
+
+function getTokenID(selector){
+    for (var i = 0;i < 4;i++) {
+        if (players[current].tokens[i].selector == ('#' + selector)) return i;
+    }
 }
 
 function playerTimer(){
@@ -206,13 +212,9 @@ function rollDice(){
             clearInterval(timer);
             $('.dice .xsmall-circle').html(dice);
 
-            if (current == 0) {
-                handleHumanPlayerTurn();
-            } else {
+            if (current > 0) {
                 handleComputerPlayerTurn();
             }
-
-            decideNextPlayer();
         } else {
             counter -= 1;
         }
@@ -263,8 +265,30 @@ function setPlayer(){
     playerTimer();
 }
 
-function handleHumanPlayerTurn(){
-    return;
+function handleHumanPlayerTurn(selectedToken){
+    if (current == 0) {
+        if (players[current].tokens[selectedToken].location == false) {
+            if (dice > 1) {
+                players[current].tokens[selectedToken].location = players[current].startTile;
+                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
+                $(players[current].tokens[selectedToken].selector).css('top', '-2px');
+            }
+        } else {
+            newLocation = players[current].tokens[selectedToken].location + dice;
+
+            // if the token reached the tile number 50 , continue !
+            if (newLocation > 51 && 
+                tiles[newLocation].type != tilesTypes.toFinish && 
+                tiles[newLocation].color != players[current].tokens[selectedToken].color) {
+                    newLocation = newLocation - 52;
+            }
+
+            moveToken(current, selectedToken, newLocation);
+            players[current].tokens[selectedToken].location = newLocation;
+        }
+
+        decideNextPlayer();
+    }
 }
 
 function handleComputerPlayerTurn(){
@@ -294,6 +318,8 @@ function handleComputerPlayerTurn(){
         moveToken(current, activeToken, newLocation);
         players[current].tokens[activeToken].location = newLocation;
     }
+
+    decideNextPlayer();
 }
 
 function decideNextPlayer(){
@@ -309,6 +335,7 @@ function checkWinner(){
         clearInterval(mainLoop);
     }
 }
+
 
 /* ***** Main Loop ***** */
 $(document).ready(function(){
@@ -327,4 +354,9 @@ $(document).ready(function(){
         setPlayer();
         rollDice();
     }, 5000);
+
+    // Human Player Handler
+    $('[id^=player-token]').click(function(){
+        handleHumanPlayerTurn(getTokenID($(this).attr('id')));
+    });
 });
