@@ -253,9 +253,13 @@ function moveToken(currentPlayer, token, distination){
         $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
 
         // fix glitch : for xsmall-circle , and toFinish triangles !!
-        if (tiles[source].type == tilesTypes.safe || tiles[source].type == tilesTypes.toFinish) {
+        if (tiles[source].type == tilesTypes.safe) {
             $(players[currentPlayer].tokens[token].selector).css('top', '-33px');
-        } else {
+        }
+        else if (tiles[source].type == tilesTypes.toFinish) {
+            $(players[currentPlayer].tokens[token].selector).css('top', '-30px');
+        } 
+        else {
             $(players[currentPlayer].tokens[token].selector).css('top', '-2px');
         }
 
@@ -276,8 +280,8 @@ function moveToken(currentPlayer, token, distination){
 function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
     var source = currentLocation;
     var moves  = players[currentPlayer].toFinishTile - currentLocation;
-    moves += distination - players[currentPlayer].firstFinishTile;
-    
+    moves += (distination - players[currentPlayer].firstFinishTile) + 1;
+
     // first: move the token to the toFinishTile!
     // second: move the token inside the finish tiles
     // if there're avilable moves to do on them !!
@@ -289,10 +293,14 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
 
         $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
 
-        // fix glitch : for xsmall-circle , and toFinish triangles !!
-        if (tiles[source].type == tilesTypes.safe || tiles[source].type == tilesTypes.toFinish) {
+        // fix glitch : for xsmall-circle , and toFinish triangles !! 
+        if (source < 72 && tiles[source].type == tilesTypes.safe) {
             $(players[currentPlayer].tokens[token].selector).css('top', '-33px');
-        } else {
+        }
+        else if (source < 72 && tiles[source].type == tilesTypes.toFinish) {
+            $(players[currentPlayer].tokens[token].selector).css('top', '-30px');
+        }
+        else {
             $(players[currentPlayer].tokens[token].selector).css('top', '-2px');
         }
     
@@ -314,7 +322,7 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
 function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
     // if i am inside the finish tiles and i got dice 
     // larger than the finish points , then do nothing!!
-    if (distination > (players[currentPlayer].firstFinishTile + 6)) {
+    if (distination > (players[currentPlayer].firstFinishTile + 5)) {
         return;
     }
 
@@ -322,19 +330,19 @@ function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
     var moves  = distination - currentLocation;
 
     var timer = setInterval(function(){
+        if (source == (players[currentPlayer].firstFinishTile + 5)) {
+            clearInterval(timer);
+            putTokenInsideFinishPoint(currentPlayer, token);
+        }
+
         $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
         $(players[currentPlayer].tokens[token].selector).css('top', '-2px');
     
         if (moves == 0) {
             clearInterval(timer);
         } else {
-            if (source == (players[currentPlayer].firstFinishTile + 5)) {
-                clearInterval(timer);
-                putTokenInsideFinishPoint(currentPlayer, token);
-            } else {
-                moves -= 1;
-                source = source + 1;
-            }
+            moves -= 1;
+            source = source + 1;
         }
     }, 500);
 }
@@ -346,15 +354,14 @@ function putTokenInsideFinishPoint(currentPlayer, token){
 }
 
 function handleHumanPlayerTurn(selectedToken){
-    dice = 2;
     var moveToFinish = false;
     var moveInFinish = false;
 
     if (current == 0) {
         if (players[current].tokens[selectedToken].location == false) {
             if (dice > 1) {
-                players[current].tokens[selectedToken].location = 32;//players[current].startTile;
-                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(32));
+                players[current].tokens[selectedToken].location = players[current].startTile;
+                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
             }
         } else {
@@ -368,7 +375,7 @@ function handleHumanPlayerTurn(selectedToken){
 
             // if the token reached my toFinish tile
             if (newLocation > players[current].toFinishTile && moveInFinish == false) {
-                newLocation = (newLocation - players[current].toFinishTile);
+                newLocation  = (newLocation - players[current].toFinishTile) - 1;
                 newLocation += players[current].firstFinishTile;
                 moveToFinish = true;
             }
