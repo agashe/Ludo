@@ -360,6 +360,11 @@ function putTokenInsideFinishPoint(currentPlayer, token){
     players[currentPlayer].activeToken = false;
     $(players[currentPlayer].finish).html(players[currentPlayer].tokensInFinish);
     $(players[currentPlayer].tokens[token].selector).hide();
+
+    // decide the winner
+    if (players[currentPlayer].tokensInFinish == 4) {
+        winner = currentPlayer;
+    }
 }
 
 function handleHumanPlayerTurn(selectedToken){
