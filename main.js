@@ -375,25 +375,24 @@ function handleHumanPlayerTurn(selectedToken){
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
- 
+            
             // if the token reached my toFinish tile
             if (newLocation > players[current].firstFinishTile && 
-                players[current].tokens[selectedToken].location > players[current].toFinishTile) {
+                players[current].tokens[selectedToken].location <= players[current].toFinishTile) {
                     moveInFinish = true;
             }
 
             // if the token reached my toFinish tile
-            if (newLocation > players[current].toFinishTile && moveInFinish == false) {
-                newLocation  = (newLocation - players[current].toFinishTile) - 1;
-                newLocation += players[current].firstFinishTile;
-                moveToFinish = true;
+            if (newLocation > players[current].toFinishTile && moveInFinish == false &&
+                players[current].tokens[selectedToken].location < players[current].toFinishTile) {
+                    newLocation  = (newLocation - players[current].toFinishTile) - 1;
+                    newLocation += players[current].firstFinishTile;
+                    moveToFinish = true;
             }
 
             // if the token reached the tile number 50 , continue !
-            if (newLocation > 51 && moveToFinish == false && moveInFinish == false &&
-                tiles[newLocation].type != tilesTypes.toFinish && 
-                tiles[newLocation].color != players[current].color) {
-                    newLocation = newLocation - 52;
+            if (newLocation > 51 && moveToFinish == false && moveInFinish == false) {
+                newLocation = newLocation - 52;
             }
 
             if (moveInFinish == true) {
@@ -435,17 +434,16 @@ function handleComputerPlayerTurn(){
         }
 
         // if the token reached my toFinish tile
-        if (newLocation > players[current].toFinishTile && moveInFinish == false) {
-            newLocation  = (newLocation - players[current].toFinishTile) - 1;
-            newLocation += players[current].firstFinishTile;
-            moveToFinish = true;
+        if (newLocation > players[current].toFinishTile && moveInFinish == false &&
+            players[current].tokens[activeToken].location <= players[current].toFinishTile) {
+                newLocation  = (newLocation - players[current].toFinishTile) - 1;
+                newLocation += players[current].firstFinishTile;
+                moveToFinish = true;
         }
 
         // if the token reached the tile number 50 , continue !
-        if (newLocation > 51 && moveToFinish == false && moveInFinish == false &&
-            tiles[newLocation].type != tilesTypes.toFinish && 
-            tiles[newLocation].color != players[current].color) {
-                newLocation = newLocation - 52;
+        if (newLocation > 51 && moveToFinish == false && moveInFinish == false) {
+            newLocation = newLocation - 52;
         }
 
         if (moveInFinish == true) {
