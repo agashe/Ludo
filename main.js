@@ -7,7 +7,7 @@
 
 /* ***** Define Basic Elements & Flags ***** */
 var mainLoop = 0;
-var current  = 1;
+var current  = 0;
 var winner   = false;
 var players  = [];
 var tiles    = [];
@@ -370,7 +370,7 @@ function handleHumanPlayerTurn(selectedToken){
         if (players[current].tokens[selectedToken].location == false) {
             if (dice > 1) {
                 players[current].tokens[selectedToken].location = players[current].startTile;
-                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(layers[current].startTile));
+                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
             }
         } else {
@@ -462,9 +462,9 @@ function handleComputerPlayerTurn(){
 
 function decideNextPlayer(){
     if (current == 3) {
-        current = 1;
+        current = 0;
     } else {
-        current = 1;
+        current += 1;
     }
 }
 
@@ -495,7 +495,7 @@ $(document).ready(function(){
     // Human Player Handler
     var turnFinish = 0; // to prevent multiple click !!
     $('[id^=player-token]').click(function(){
-        if (turnFinish == 0) {
+        if (turnFinish == 0 && current == 0) {
             handleHumanPlayerTurn(getTokenID($(this).attr('id')));
             turnFinish = 1;
         }
