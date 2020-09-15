@@ -7,7 +7,7 @@
 
 /* ***** Define Basic Elements & Flags ***** */
 var mainLoop = 0;
-var current  = 0;
+var current  = 1;
 var winner   = false;
 var players  = [];
 var tiles    = [];
@@ -275,6 +275,8 @@ function moveToken(currentPlayer, token, distination){
             }
         }
     }, 500);
+
+    players[currentPlayer].tokens[token].location = distination;
 }
 
 function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
@@ -289,6 +291,7 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
         if (source == (players[currentPlayer].firstFinishTile + 5)) {
             clearInterval(timer);
             putTokenInsideFinishPoint(currentPlayer, token);
+            return;
         }
 
         $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
@@ -317,6 +320,8 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
             }
         }
     }, 500);
+
+    players[currentPlayer].tokens[token].location = distination;
 }
 
 function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
@@ -333,6 +338,7 @@ function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
         if (source == (players[currentPlayer].firstFinishTile + 5)) {
             clearInterval(timer);
             putTokenInsideFinishPoint(currentPlayer, token);
+            return;
         }
 
         $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
@@ -345,10 +351,13 @@ function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
             source = source + 1;
         }
     }, 500);
+
+    players[currentPlayer].tokens[token].location = distination;
 }
 
 function putTokenInsideFinishPoint(currentPlayer, token){
     players[currentPlayer].tokensInFinish += 1;
+    players[currentPlayer].activeToken = false;
     $(players[currentPlayer].finish).html(players[currentPlayer].tokensInFinish);
     $(players[currentPlayer].tokens[token].selector).hide();
 }
@@ -361,12 +370,12 @@ function handleHumanPlayerTurn(selectedToken){
         if (players[current].tokens[selectedToken].location == false) {
             if (dice > 1) {
                 players[current].tokens[selectedToken].location = players[current].startTile;
-                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
+                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(layers[current].startTile));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
-
+ 
             // if the token reached my toFinish tile
             if (newLocation > players[current].firstFinishTile && 
                 players[current].tokens[selectedToken].location > players[current].toFinishTile) {
@@ -396,19 +405,19 @@ function handleHumanPlayerTurn(selectedToken){
             else {
                 moveToken(current, selectedToken, newLocation);
             }
-
-            players[current].tokens[selectedToken].location = newLocation;
         }
     }
 }
 
 function handleComputerPlayerTurn(){
-    var activeToken = false;
-    var newLocation = false;
+    var activeToken  = false;
+    var newLocation  = false;
+    var moveToFinish = false;
+    var moveInFinish = false;
 
     if (players[current].activeToken === false) {
         if (dice > 1) {
-            activeToken = 0;
+            activeToken = players[current].tokensInFinish;
             players[current].activeToken = activeToken;
 
             players[current].tokens[activeToken].location = players[current].startTile;
@@ -419,23 +428,43 @@ function handleComputerPlayerTurn(){
         activeToken = players[current].activeToken;
         newLocation = players[current].tokens[activeToken].location + dice;
 
+        // if the token reached my toFinish tile
+        if (newLocation > players[current].firstFinishTile && 
+            players[current].tokens[activeToken].location > players[current].toFinishTile) {
+                moveInFinish = true;
+        }
+
+        // if the token reached my toFinish tile
+        if (newLocation > players[current].toFinishTile && moveInFinish == false) {
+            newLocation  = (newLocation - players[current].toFinishTile) - 1;
+            newLocation += players[current].firstFinishTile;
+            moveToFinish = true;
+        }
+
         // if the token reached the tile number 50 , continue !
-        if (newLocation > 51 && 
-            tiles[newLocation].type != tilesTypes.toFinishTile && 
+        if (newLocation > 51 && moveToFinish == false && moveInFinish == false &&
+            tiles[newLocation].type != tilesTypes.toFinish && 
             tiles[newLocation].color != players[current].color) {
                 newLocation = newLocation - 52;
         }
 
-        moveToken(current, activeToken, newLocation);
-        players[current].tokens[activeToken].location = newLocation;
+        if (moveInFinish == true) {
+            moveTokenInFinish(current, activeToken, players[current].tokens[activeToken].location, newLocation);
+        } 
+        else if (moveToFinish == true) {
+            moveTokenToFinish(current, activeToken, players[current].tokens[activeToken].location, newLocation);
+        } 
+        else {
+            moveToken(current, activeToken, newLocation);
+        }
     }
 }
 
 function decideNextPlayer(){
     if (current == 3) {
-        current = 0;
+        current = 1;
     } else {
-        current = 0;
+        current = 1;
     }
 }
 
