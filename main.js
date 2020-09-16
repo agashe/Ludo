@@ -33,10 +33,11 @@ const playersColors = {
     yellow : 'yellow',
 };
 
-var Tile = function(selector, type, color){
+var Tile = function(selector, type, color, token){
     this.selector = selector;
     this.type     = type;
     this.color    = color;
+    this.token    = token;
 };
 
 var Token = function(selector, location){
@@ -144,7 +145,7 @@ function initGame(){
             color = '';
         }
 
-        tiles.push(new Tile(('#t-' + i), type, color));
+        tiles.push(new Tile(('#t-' + i), type, color, false));
     }
     
     // Initialize Players
@@ -195,6 +196,10 @@ function getTokenID(selector){
     }
 }
 
+function getTokenHomePoint(player, token){
+    return players[player].home + '-p' + (token+1);
+}
+
 function playerTimer(){
     var counter  = 2;
     var timer = setInterval(function(){
@@ -231,9 +236,9 @@ function rollDice(){
 
 function setPlayer(){
     $('#player-box .name').html(players[current].name);
-    $('#player-box .name').removeClass(playersColors.blue+' '+
-        playersColors.red+' '+
-        playersColors.green+' '+
+    $('#player-box .name').removeClass(playersColors.blue + ' ' +
+        playersColors.red + ' ' +
+        playersColors.green + ' ' +
         playersColors.yellow);
     $('#player-box .name').addClass(players[current].color);    
     playerTimer();
@@ -250,7 +255,25 @@ function moveToken(currentPlayer, token, distination){
     }
 
     var timer = setInterval(function(){
-        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+        // kill enemy's token :D
+        if (tiles[source].token !== false && source != players[currentPlayer].tokens[token].location) {
+            if (tiles[source].token.player != currentPlayer) {
+                var enemyPlayer = tiles[source].token.player;
+                var enemyToken = tiles[source].token.id;
+                
+                $(players[enemyPlayer].tokens[enemyToken].selector)
+                .appendTo(getTokenHomePoint(enemyPlayer, enemyToken));
+                
+                players[enemyPlayer].activeToken = false;  
+
+                $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+            } else {
+                $(players[currentPlayer].tokens[token].selector).hide();
+            }
+        } else {
+            $(players[currentPlayer].tokens[token].selector).show();
+            $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+        }
 
         // fix glitch : for xsmall-circle , and toFinish triangles !!
         if (tiles[source].type == tilesTypes.safe) {
@@ -276,7 +299,9 @@ function moveToken(currentPlayer, token, distination){
         }
     }, 500);
 
+    tiles[players[currentPlayer].tokens[token].location].token = false;
     players[currentPlayer].tokens[token].location = distination;
+    tiles[distination].token = {player: currentPlayer, id: token};
 }
 
 function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
@@ -376,11 +401,13 @@ function handleHumanPlayerTurn(selectedToken){
         if (players[current].tokens[selectedToken].location === false) {
             if (dice > 1) {
                 players[current].tokens[selectedToken].location = players[current].startTile;
+                tiles[players[current].startTile].token = {player: current, id: selectedToken};
                 $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
                 
-                $(players[1].tokens[0].selector).appendTo(tileSelector(44));
-                $(players[1].tokens[0].selector).css('top', '-2px');
+                tiles[44].token = {player: 0, id: 3};
+                $(players[0].tokens[3].selector).appendTo(tileSelector(44));
+                $(players[0].tokens[3].selector).css('top', '-2px');
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
