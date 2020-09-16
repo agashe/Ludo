@@ -247,16 +247,6 @@ function setPlayer(){
 function moveToken(currentPlayer, token, distination){
     var source = players[currentPlayer].tokens[token].location;
 
-    // in case there's token with the same color , add 1 move for the distination
-    // NOTE: this a temperary solution for multiple tokens on the same tile!!
-    if (tiles[distination].token.player == currentPlayer) {
-        if ((distination + 1) < players[currentPlayer].toFinishTile) {
-            distination += 1;
-        } else {
-            distination -= 1;
-        }
-    }
-
     var moves = 0;
     if (source > distination) {
         moves  = distination - (source - 52);
@@ -342,6 +332,7 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
         if (tiles[source].token !== false && 
             (tiles[source].token.player != currentPlayer || 
             (tiles[source].token.player == currentPlayer && tiles[source].token.id != token))) {
+
                 if (tiles[source].token.player != currentPlayer) {
                     if (tiles[source].type == tilesTypes.start || tiles[source].type == tilesTypes.safe) {
                         source += 1;
@@ -415,8 +406,10 @@ function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
         }
 
         // If there's multiple tokens in the finish
-        if (tiles[source].token !== false) {
-            $(players[currentPlayer].tokens[token].selector).hide();
+        if (tiles[source].token !== false && 
+            (tiles[source].token.player != currentPlayer || 
+            (tiles[source].token.player == currentPlayer && tiles[source].token.id != token))) {
+                $(players[currentPlayer].tokens[token].selector).hide();
         } else {
             $(players[currentPlayer].tokens[token].selector).show();
             $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
@@ -450,34 +443,40 @@ function putTokenInsideFinishPoint(currentPlayer, token){
 }
 
 function handleHumanPlayerTurn(selectedToken){
-    dice = 2;
+    dice = 6;
     var moveToFinish = false;
     var moveInFinish = false;
 
     if (current == 0) {
         if (players[current].tokens[selectedToken].location === false) {
             if (dice > 1) {
-                players[current].tokens[selectedToken].location = 34;//players[current].startTile;
-                tiles[34].token = {player: current, id: selectedToken};
-                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(34));
+                players[current].tokens[selectedToken].location = 38;//players[current].startTile;
+                tiles[38].token = {player: current, id: selectedToken};
+                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(38));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
                 
-                tiles[68].token = {player: 0, id: 3};
-                $(players[0].tokens[3].selector).appendTo(tileSelector(68));
+                tiles[71].token = {player: 0, id: 3};
+                $(players[0].tokens[3].selector).appendTo(tileSelector(71));
                 $(players[0].tokens[3].selector).css('top', '-2px');
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
 
+            // in case there's a token with the same color on the same tile , add 1 move for the newLocation
+            // NOTE: this a temperary solution for multiple tokens on the same tile!!
+            if (tiles[newLocation].token.player == current) {
+                newLocation += 1;
+            }
+
             // if the token reached my toFinish tile
             if (newLocation > players[current].firstFinishTile && 
-                players[current].tokens[selectedToken].location <= players[current].toFinishTile) {
+                players[current].tokens[selectedToken].location > players[current].toFinishTile) {
                     moveInFinish = true;
             }
 
             // if the token reached my toFinish tile
             if (newLocation > players[current].toFinishTile && moveInFinish == false &&
-                players[current].tokens[selectedToken].location < players[current].toFinishTile) {
+                players[current].tokens[selectedToken].location <= players[current].toFinishTile) {
                     newLocation  = (newLocation - players[current].toFinishTile) - 1;
                     newLocation += players[current].firstFinishTile;
                     moveToFinish = true;
