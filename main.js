@@ -266,15 +266,21 @@ function moveToken(currentPlayer, token, distination){
             (tiles[source].token.player != currentPlayer || 
             (tiles[source].token.player == currentPlayer && tiles[source].token.id != token))) {
                 if (tiles[source].token.player != currentPlayer) {
-                    var enemyPlayer = tiles[source].token.player;
-                    var enemyToken = tiles[source].token.id;
-                    
-                    $(players[enemyPlayer].tokens[enemyToken].selector)
-                    .appendTo(getTokenHomePoint(enemyPlayer, enemyToken));
-                    
-                    players[enemyPlayer].activeToken = false;  
+                    if (tiles[source].type == tilesTypes.start || tiles[source].type == tilesTypes.safe) {
+                        source += 1;
+                        distination += 1;
+                        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+                    } else {
+                        var enemyPlayer = tiles[source].token.player;
+                        var enemyToken = tiles[source].token.id;
+                        
+                        $(players[enemyPlayer].tokens[enemyToken].selector)
+                        .appendTo(getTokenHomePoint(enemyPlayer, enemyToken));
+                        
+                        players[enemyPlayer].activeToken = false;  
 
-                    $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+                        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+                    }
                 } else {
                     $(players[currentPlayer].tokens[token].selector).hide();
                 }
@@ -413,9 +419,9 @@ function handleHumanPlayerTurn(selectedToken){
                 $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
                 
-                tiles[0].token = {player: 0, id: 3};
-                $(players[0].tokens[3].selector).appendTo(tileSelector(0));
-                $(players[0].tokens[3].selector).css('top', '-2px');
+                tiles[1].token = {player: 0, id: 3};
+                $(players[0].tokens[3].selector).appendTo(tileSelector(1));
+                $(players[0].tokens[3].selector).css('top', '-31px');
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
