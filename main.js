@@ -368,6 +368,7 @@ function putTokenInsideFinishPoint(currentPlayer, token){
 }
 
 function handleHumanPlayerTurn(selectedToken){
+    dice = 6;
     var moveToFinish = false;
     var moveInFinish = false;
 
@@ -377,6 +378,9 @@ function handleHumanPlayerTurn(selectedToken){
                 players[current].tokens[selectedToken].location = players[current].startTile;
                 $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
+                
+                $(players[1].tokens[0].selector).appendTo(tileSelector(44));
+                $(players[1].tokens[0].selector).css('top', '-2px');
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
