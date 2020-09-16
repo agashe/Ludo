@@ -372,7 +372,7 @@ function handleHumanPlayerTurn(selectedToken){
     var moveInFinish = false;
 
     if (current == 0) {
-        if (players[current].tokens[selectedToken].location == false) {
+        if (players[current].tokens[selectedToken].location === false) {
             if (dice > 1) {
                 players[current].tokens[selectedToken].location = players[current].startTile;
                 $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
@@ -380,7 +380,7 @@ function handleHumanPlayerTurn(selectedToken){
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
-            
+
             // if the token reached my toFinish tile
             if (newLocation > players[current].firstFinishTile && 
                 players[current].tokens[selectedToken].location <= players[current].toFinishTile) {
@@ -467,7 +467,7 @@ function decideNextPlayer(){
     if (current == 3) {
         current = 0;
     } else {
-        current += 1;
+        current = 0;
     }
 }
 
