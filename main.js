@@ -247,6 +247,12 @@ function setPlayer(){
 function moveToken(currentPlayer, token, distination){
     var source = players[currentPlayer].tokens[token].location;
 
+    // in case there's token with the same color , add 1 move for the distination
+    // NOTE: this a temperary solution for multiple tokens on the same tile!!
+    if (tiles[distination].token.player == currentPlayer) {
+        distination += 1;
+    }
+
     var moves = 0;
     if (source > distination) {
         moves  = distination - (source - 52);
@@ -256,20 +262,22 @@ function moveToken(currentPlayer, token, distination){
 
     var timer = setInterval(function(){
         // kill enemy's token :D
-        if (tiles[source].token !== false && source != players[currentPlayer].tokens[token].location) {
-            if (tiles[source].token.player != currentPlayer) {
-                var enemyPlayer = tiles[source].token.player;
-                var enemyToken = tiles[source].token.id;
-                
-                $(players[enemyPlayer].tokens[enemyToken].selector)
-                .appendTo(getTokenHomePoint(enemyPlayer, enemyToken));
-                
-                players[enemyPlayer].activeToken = false;  
+        if (tiles[source].token !== false && 
+            (tiles[source].token.player != currentPlayer || 
+            (tiles[source].token.player == currentPlayer && tiles[source].token.id != token))) {
+                if (tiles[source].token.player != currentPlayer) {
+                    var enemyPlayer = tiles[source].token.player;
+                    var enemyToken = tiles[source].token.id;
+                    
+                    $(players[enemyPlayer].tokens[enemyToken].selector)
+                    .appendTo(getTokenHomePoint(enemyPlayer, enemyToken));
+                    
+                    players[enemyPlayer].activeToken = false;  
 
-                $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
-            } else {
-                $(players[currentPlayer].tokens[token].selector).hide();
-            }
+                    $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+                } else {
+                    $(players[currentPlayer].tokens[token].selector).hide();
+                }
         } else {
             $(players[currentPlayer].tokens[token].selector).show();
             $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
@@ -288,6 +296,10 @@ function moveToken(currentPlayer, token, distination){
 
         if (moves == 0) {
             clearInterval(timer);
+
+            tiles[players[currentPlayer].tokens[token].location].token = false;
+            players[currentPlayer].tokens[token].location = distination;
+            tiles[distination].token = {player: currentPlayer, id: token};
         } else {
             moves -= 1;
             
@@ -298,10 +310,6 @@ function moveToken(currentPlayer, token, distination){
             }
         }
     }, 500);
-
-    tiles[players[currentPlayer].tokens[token].location].token = false;
-    players[currentPlayer].tokens[token].location = distination;
-    tiles[distination].token = {player: currentPlayer, id: token};
 }
 
 function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
@@ -393,7 +401,7 @@ function putTokenInsideFinishPoint(currentPlayer, token){
 }
 
 function handleHumanPlayerTurn(selectedToken){
-    dice = 6;
+    dice = 4;
     var moveToFinish = false;
     var moveInFinish = false;
 
@@ -405,8 +413,8 @@ function handleHumanPlayerTurn(selectedToken){
                 $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
                 
-                tiles[44].token = {player: 0, id: 3};
-                $(players[0].tokens[3].selector).appendTo(tileSelector(44));
+                tiles[0].token = {player: 0, id: 3};
+                $(players[0].tokens[3].selector).appendTo(tileSelector(0));
                 $(players[0].tokens[3].selector).css('top', '-2px');
             }
         } else {
