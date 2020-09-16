@@ -46,19 +46,21 @@ var Token = function(selector, location){
 };
 
 var Player = function(name, type, home, color, finish, tokens, 
-        startTile, toFinishTile, firstFinishTile, activeToken, tokensInFinish){
-        this.name   = name;
-        this.type   = type;
-        this.home   = home;
-        this.color  = color;
-        this.finish = finish;
-        this.tokens = tokens;
-        
-        this.startTile       = startTile;
-        this.toFinishTile    = toFinishTile;
-        this.firstFinishTile = firstFinishTile;
-        this.activeToken     = activeToken;
-        this.tokensInFinish  = tokensInFinish;
+        startTile, toFinishTile, firstFinishTile, finishPointID, 
+        activeToken, tokensInFinish){
+            this.name   = name;
+            this.type   = type;
+            this.home   = home;
+            this.color  = color;
+            this.finish = finish;
+            this.tokens = tokens;
+            
+            this.startTile       = startTile;
+            this.toFinishTile    = toFinishTile;
+            this.firstFinishTile = firstFinishTile;
+            this.finishPointID   = finishPointID;
+            this.activeToken     = activeToken;
+            this.tokensInFinish  = tokensInFinish;
 };
 
 
@@ -155,7 +157,7 @@ function initGame(){
         new Token('#player-token2', false),
         new Token('#player-token3', false),
         new Token('#player-token4', false),
-    ], 40, 38, 67, false, 0);
+    ], 40, 38, 67, 72, false, 0);
     
     players[1] = new Player('COM #1', playersTypes.computer, '#com1-home', 
         playersColors.red, '#com1-finish span', [
@@ -163,7 +165,7 @@ function initGame(){
         new Token('#com1-token2', false),
         new Token('#com1-token3', false),
         new Token('#com1-token4', false),
-    ], 1, 51, 52, false, 0);
+    ], 1, 51, 52, 57, false, 0);
     
     players[2] = new Player('COM #2', playersTypes.computer, '#com2-home', 
         playersColors.green, '#com2-finish span', [
@@ -171,7 +173,7 @@ function initGame(){
         new Token('#com2-token2', false),
         new Token('#com2-token3', false),
         new Token('#com2-token4', false),
-    ], 14, 12, 57, false, 0);
+    ], 14, 12, 57, 62, false, 0);
     
     players[3] = new Player('COM #3', playersTypes.computer, '#com3-home', 
         playersColors.yellow, '#com3-finish span', [
@@ -179,7 +181,7 @@ function initGame(){
         new Token('#com3-token2', false),
         new Token('#com3-token3', false),
         new Token('#com3-token4', false),
-    ], 27, 25, 62, false, 0);
+    ], 27, 25, 62, 67, false, 0);
 }
 
 function tileSelector(id){
@@ -321,7 +323,7 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
     // second: move the token inside the finish tiles
     // if there're avilable moves to do on them !!
     var timer = setInterval(function(){
-        if (source == (players[currentPlayer].firstFinishTile + 5)) {
+        if (source == players[currentPlayer].finishPointID) {
             clearInterval(timer);
             putTokenInsideFinishPoint(currentPlayer, token);
             tiles[players[currentPlayer].tokens[token].location].token = false;
@@ -390,7 +392,7 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
 function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
     // if i am inside the finish tiles and i got dice 
     // larger than the finish points , then do nothing!!
-    if (distination > (players[currentPlayer].firstFinishTile + 5)) {
+    if (distination > players[currentPlayer].finishPointID) {
         return;
     }
 
@@ -398,7 +400,7 @@ function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
     var moves  = distination - currentLocation;
 
     var timer = setInterval(function(){
-        if (source == (players[currentPlayer].firstFinishTile + 5)) {
+        if (source == players[currentPlayer].finishPointID) {
             clearInterval(timer);
             putTokenInsideFinishPoint(currentPlayer, token);
             tiles[players[currentPlayer].tokens[token].location].token = false;
@@ -443,57 +445,43 @@ function putTokenInsideFinishPoint(currentPlayer, token){
 }
 
 function handleHumanPlayerTurn(selectedToken){
-    dice = 6;
-    var moveToFinish = false;
-    var moveInFinish = false;
+    var oldLocation = players[current].tokens[selectedToken].location;
+    var newLocation = players[current].tokens[selectedToken].location + dice;
 
     if (current == 0) {
-        if (players[current].tokens[selectedToken].location === false) {
+        if (oldLocation === false) {
             if (dice > 1) {
-                players[current].tokens[selectedToken].location = 38;//players[current].startTile;
-                tiles[38].token = {player: current, id: selectedToken};
-                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(38));
+                players[current].tokens[selectedToken].location = players[current].startTile;
+                tiles[32].token = {player: current, id: selectedToken};
+                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
-                
-                tiles[71].token = {player: 0, id: 3};
-                $(players[0].tokens[3].selector).appendTo(tileSelector(71));
-                $(players[0].tokens[3].selector).css('top', '-2px');
             }
         } else {
-            newLocation = players[current].tokens[selectedToken].location + dice;
-
             // in case there's a token with the same color on the same tile , add 1 move for the newLocation
             // NOTE: this a temperary solution for multiple tokens on the same tile!!
-            if (tiles[newLocation].token.player == current) {
+            if (tiles[newLocation].token.player == current && newLocation < players[current].finishPointID) {
                 newLocation += 1;
             }
 
             // if the token reached my toFinish tile
-            if (newLocation > players[current].firstFinishTile && 
-                players[current].tokens[selectedToken].location > players[current].toFinishTile) {
-                    moveInFinish = true;
+            if (newLocation > players[current].firstFinishTile && oldLocation > players[current].toFinishTile) {
+                moveTokenInFinish(current, selectedToken, oldLocation, newLocation);
             }
 
             // if the token reached my toFinish tile
-            if (newLocation > players[current].toFinishTile && moveInFinish == false &&
-                players[current].tokens[selectedToken].location <= players[current].toFinishTile) {
-                    newLocation  = (newLocation - players[current].toFinishTile) - 1;
-                    newLocation += players[current].firstFinishTile;
-                    moveToFinish = true;
+            else if (newLocation > players[current].toFinishTile && oldLocation <= players[current].toFinishTile) {
+                newLocation  = (newLocation - players[current].toFinishTile) - 1;
+                newLocation += players[current].firstFinishTile;
+                moveTokenToFinish(current, selectedToken, oldLocation, newLocation);
             }
 
-            // if the token reached the tile number 50 , continue !
-            if (newLocation > 51 && moveToFinish == false && moveInFinish == false) {
-                newLocation = newLocation - 52;
-            }
-
-            if (moveInFinish == true) {
-                moveTokenInFinish(current, selectedToken, players[current].tokens[selectedToken].location, newLocation);
-            } 
-            else if (moveToFinish == true) {
-                moveTokenToFinish(current, selectedToken, players[current].tokens[selectedToken].location, newLocation);
-            } 
+            // moving on the normal tiles
             else {
+                // if the token reached the tile number 50 , continue !
+                if (newLocation > 51) {
+                    newLocation = newLocation - 52;
+                }
+
                 moveToken(current, selectedToken, newLocation);
             }
         }
@@ -501,10 +489,9 @@ function handleHumanPlayerTurn(selectedToken){
 }
 
 function handleComputerPlayerTurn(){
-    var activeToken  = false;
-    var newLocation  = false;
-    var moveToFinish = false;
-    var moveInFinish = false;
+    var activeToken = players[current].activeToken;
+    var oldLocation = players[current].tokens[activeToken].location;
+    var newLocation = players[current].tokens[activeToken].location + dice;
 
     if (players[current].activeToken === false) {
         if (dice > 1) {
@@ -516,35 +503,31 @@ function handleComputerPlayerTurn(){
             $(players[current].tokens[activeToken].selector).css('top', '-2px');
         }
     } else {
-        activeToken = players[current].activeToken;
-        newLocation = players[current].tokens[activeToken].location + dice;
-
-        // if the token reached my toFinish tile
-        if (newLocation > players[current].firstFinishTile && 
-            players[current].tokens[activeToken].location > players[current].toFinishTile) {
-                moveInFinish = true;
+        // in case there's a token with the same color on the same tile , add 1 move for the newLocation
+        // NOTE: this a temperary solution for multiple tokens on the same tile!!
+        if (tiles[newLocation].token.player == current && newLocation < players[current].finishPointID) {
+            newLocation += 1;
         }
 
         // if the token reached my toFinish tile
-        if (newLocation > players[current].toFinishTile && moveInFinish == false &&
-            players[current].tokens[activeToken].location <= players[current].toFinishTile) {
-                newLocation  = (newLocation - players[current].toFinishTile) - 1;
-                newLocation += players[current].firstFinishTile;
-                moveToFinish = true;
+        if (newLocation > players[current].firstFinishTile && oldLocation > players[current].toFinishTile) {
+            moveTokenInFinish(current, activeToken, oldLocation, newLocation);
         }
 
-        // if the token reached the tile number 50 , continue !
-        if (newLocation > 51 && moveToFinish == false && moveInFinish == false) {
-            newLocation = newLocation - 52;
+        // if the token reached my toFinish tile
+        else if (newLocation > players[current].toFinishTile && oldLocation <= players[current].toFinishTile) {
+            newLocation  = (newLocation - players[current].toFinishTile) - 1;
+            newLocation += players[current].firstFinishTile;
+            moveTokenToFinish(current, activeToken, oldLocation, newLocation);
         }
 
-        if (moveInFinish == true) {
-            moveTokenInFinish(current, activeToken, players[current].tokens[activeToken].location, newLocation);
-        } 
-        else if (moveToFinish == true) {
-            moveTokenToFinish(current, activeToken, players[current].tokens[activeToken].location, newLocation);
-        } 
+        // moving on the normal tiles
         else {
+            // if the token reached the tile number 50 , continue !
+            if (newLocation > 51) {
+                newLocation = newLocation - 52;
+            }
+
             moveToken(current, activeToken, newLocation);
         }
     }
@@ -554,13 +537,14 @@ function decideNextPlayer(){
     if (current == 3) {
         current = 0;
     } else {
-        current = 0;
+        current += 1;
     }
 }
 
 function checkWinner(){
     if (winner !== false) {
         clearInterval(mainLoop);
+        alert(players[winner].name + ' WIN !!');
     }
 }
 
