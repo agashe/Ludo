@@ -250,7 +250,11 @@ function moveToken(currentPlayer, token, distination){
     // in case there's token with the same color , add 1 move for the distination
     // NOTE: this a temperary solution for multiple tokens on the same tile!!
     if (tiles[distination].token.player == currentPlayer) {
-        distination += 1;
+        if ((distination + 1) < players[currentPlayer].toFinishTile) {
+            distination += 1;
+        } else {
+            distination -= 1;
+        }
     }
 
     var moves = 0;
@@ -330,10 +334,37 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
         if (source == (players[currentPlayer].firstFinishTile + 5)) {
             clearInterval(timer);
             putTokenInsideFinishPoint(currentPlayer, token);
+            tiles[players[currentPlayer].tokens[token].location].token = false;
             return;
         }
 
-        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+        // kill enemy's token :D
+        if (tiles[source].token !== false && 
+            (tiles[source].token.player != currentPlayer || 
+            (tiles[source].token.player == currentPlayer && tiles[source].token.id != token))) {
+                if (tiles[source].token.player != currentPlayer) {
+                    if (tiles[source].type == tilesTypes.start || tiles[source].type == tilesTypes.safe) {
+                        source += 1;
+                        distination += 1;
+                        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+                    } else {
+                        var enemyPlayer = tiles[source].token.player;
+                        var enemyToken = tiles[source].token.id;
+                        
+                        $(players[enemyPlayer].tokens[enemyToken].selector)
+                        .appendTo(getTokenHomePoint(enemyPlayer, enemyToken));
+                        
+                        players[enemyPlayer].activeToken = false;  
+
+                        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+                    }
+                } else {
+                    $(players[currentPlayer].tokens[token].selector).hide();
+                }
+        } else {
+            $(players[currentPlayer].tokens[token].selector).show();
+            $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+        }
 
         // fix glitch : for xsmall-circle , and toFinish triangles !! 
         if (source < 72 && tiles[source].type == tilesTypes.safe) {
@@ -348,6 +379,10 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
     
         if (moves == 0) {
             clearInterval(timer);
+
+            tiles[players[currentPlayer].tokens[token].location].token = false;
+            players[currentPlayer].tokens[token].location = distination;
+            tiles[distination].token = {player: currentPlayer, id: token};
         } else {
             moves -= 1;
 
@@ -359,8 +394,6 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
             }
         }
     }, 500);
-
-    players[currentPlayer].tokens[token].location = distination;
 }
 
 function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
@@ -377,21 +410,31 @@ function moveTokenInFinish(currentPlayer, token, currentLocation, distination){
         if (source == (players[currentPlayer].firstFinishTile + 5)) {
             clearInterval(timer);
             putTokenInsideFinishPoint(currentPlayer, token);
+            tiles[players[currentPlayer].tokens[token].location].token = false;
             return;
         }
 
-        $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+        // If there's multiple tokens in the finish
+        if (tiles[source].token !== false) {
+            $(players[currentPlayer].tokens[token].selector).hide();
+        } else {
+            $(players[currentPlayer].tokens[token].selector).show();
+            $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
+        }
+
         $(players[currentPlayer].tokens[token].selector).css('top', '-2px');
     
         if (moves == 0) {
             clearInterval(timer);
+            
+            tiles[players[currentPlayer].tokens[token].location].token = false;
+            players[currentPlayer].tokens[token].location = distination;
+            tiles[distination].token = {player: currentPlayer, id: token};
         } else {
             moves -= 1;
             source = source + 1;
         }
     }, 500);
-
-    players[currentPlayer].tokens[token].location = distination;
 }
 
 function putTokenInsideFinishPoint(currentPlayer, token){
@@ -407,21 +450,21 @@ function putTokenInsideFinishPoint(currentPlayer, token){
 }
 
 function handleHumanPlayerTurn(selectedToken){
-    dice = 4;
+    dice = 2;
     var moveToFinish = false;
     var moveInFinish = false;
 
     if (current == 0) {
         if (players[current].tokens[selectedToken].location === false) {
             if (dice > 1) {
-                players[current].tokens[selectedToken].location = players[current].startTile;
-                tiles[players[current].startTile].token = {player: current, id: selectedToken};
-                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
+                players[current].tokens[selectedToken].location = 34;//players[current].startTile;
+                tiles[34].token = {player: current, id: selectedToken};
+                $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(34));
                 $(players[current].tokens[selectedToken].selector).css('top', '-2px');
                 
-                tiles[1].token = {player: 0, id: 3};
-                $(players[0].tokens[3].selector).appendTo(tileSelector(1));
-                $(players[0].tokens[3].selector).css('top', '-31px');
+                tiles[68].token = {player: 0, id: 3};
+                $(players[0].tokens[3].selector).appendTo(tileSelector(68));
+                $(players[0].tokens[3].selector).css('top', '-2px');
             }
         } else {
             newLocation = players[current].tokens[selectedToken].location + dice;
