@@ -261,6 +261,7 @@ function moveToken(currentPlayer, token, distination){
         if (tiles[source].token !== false && 
             (tiles[source].token.player != currentPlayer || 
             (tiles[source].token.player == currentPlayer && tiles[source].token.id != token))) {
+                console.log(tiles[source].token);
                 if (tiles[source].token.player != currentPlayer) {
                     if (tiles[source].type == tilesTypes.start || tiles[source].type == tilesTypes.safe) {
                         source += 1;
@@ -273,6 +274,7 @@ function moveToken(currentPlayer, token, distination){
                         $(players[enemyPlayer].tokens[enemyToken].selector)
                         .appendTo(getTokenHomePoint(enemyPlayer, enemyToken));
                         
+                        tiles[players[enemyPlayer].tokens[enemyToken].location].token = false;
                         players[enemyPlayer].activeToken = false;  
 
                         $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
@@ -347,6 +349,7 @@ function moveTokenToFinish(currentPlayer, token, currentLocation, distination){
                         $(players[enemyPlayer].tokens[enemyToken].selector)
                         .appendTo(getTokenHomePoint(enemyPlayer, enemyToken));
                         
+                        tiles[players[enemyPlayer].tokens[enemyToken].location].token = false;
                         players[enemyPlayer].activeToken = false;  
 
                         $(players[currentPlayer].tokens[token].selector).appendTo(tileSelector(source));
@@ -451,10 +454,17 @@ function handleHumanPlayerTurn(selectedToken){
     if (current == 0) {
         if (oldLocation === false) {
             if (dice > 1) {
-                players[current].tokens[selectedToken].location = players[current].startTile;
-                tiles[32].token = {player: current, id: selectedToken};
                 $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
-                $(players[current].tokens[selectedToken].selector).css('top', '-2px');
+                // temporery fix for multiple tokens on the start tile!
+                if (tiles[players[current].startTile].token !== false &&
+                    tiles[players[current].startTile].token.id != selectedToken) {
+                        $(players[current].tokens[selectedToken].selector).css('top', '-33px');
+                } else {
+                    $(players[current].tokens[selectedToken].selector).css('top', '-2px');
+                }
+
+                players[current].tokens[selectedToken].location = players[current].startTile;
+                tiles[players[current].startTile].token = {player: current, id: selectedToken};
             }
         } else {
             // in case there's a token with the same color on the same tile , add 1 move for the newLocation
@@ -490,8 +500,6 @@ function handleHumanPlayerTurn(selectedToken){
 
 function handleComputerPlayerTurn(){
     var activeToken = players[current].activeToken;
-    var oldLocation = players[current].tokens[activeToken].location;
-    var newLocation = players[current].tokens[activeToken].location + dice;
 
     if (players[current].activeToken === false) {
         if (dice > 1) {
@@ -499,10 +507,14 @@ function handleComputerPlayerTurn(){
             players[current].activeToken = activeToken;
 
             players[current].tokens[activeToken].location = players[current].startTile;
+            tiles[players[current].startTile].token = {player: current, id: activeToken};
             $(players[current].tokens[activeToken].selector).appendTo(tileSelector(players[current].startTile));
             $(players[current].tokens[activeToken].selector).css('top', '-2px');
         }
     } else {
+        var oldLocation = players[current].tokens[activeToken].location;
+        var newLocation = players[current].tokens[activeToken].location + dice;
+
         // in case there's a token with the same color on the same tile , add 1 move for the newLocation
         // NOTE: this a temperary solution for multiple tokens on the same tile!!
         if (tiles[newLocation].token.player == current && newLocation < players[current].finishPointID) {
