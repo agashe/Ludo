@@ -203,7 +203,7 @@ function getTokenHomePoint(player, token){
 }
 
 function playerTimer(){
-    var counter  = 2;
+    var counter  = 5;
     var timer = setInterval(function(){
         $('.timer').html(counter);
 
@@ -214,7 +214,7 @@ function playerTimer(){
             counter -= 1;
         }
     }, 1000);
-    $('.timer').html('2');
+    $('.timer').html('5');
 }
 
 function rollDice(){
@@ -261,7 +261,6 @@ function moveToken(currentPlayer, token, distination){
         if (tiles[source].token !== false && 
             (tiles[source].token.player != currentPlayer || 
             (tiles[source].token.player == currentPlayer && tiles[source].token.id != token))) {
-                console.log(tiles[source].token);
                 if (tiles[source].token.player != currentPlayer) {
                     if (tiles[source].type == tilesTypes.start || tiles[source].type == tilesTypes.safe) {
                         source += 1;
@@ -453,7 +452,7 @@ function handleHumanPlayerTurn(selectedToken){
 
     if (current == 0) {
         if (oldLocation === false) {
-            if (dice > 1) {
+            if (dice == 1 || dice == 6) {
                 $(players[current].tokens[selectedToken].selector).appendTo(tileSelector(players[current].startTile));
                 // temporery fix for multiple tokens on the start tile!
                 if (tiles[players[current].startTile].token !== false &&
@@ -502,7 +501,7 @@ function handleComputerPlayerTurn(){
     var activeToken = players[current].activeToken;
 
     if (players[current].activeToken === false) {
-        if (dice > 1) {
+        if (dice == 1 || dice == 6) {
             activeToken = players[current].tokensInFinish;
             players[current].activeToken = activeToken;
 
@@ -576,7 +575,7 @@ $(document).ready(function(){
         setPlayer();
         rollDice();
         turnFinish = 0;
-    }, 5000);
+    }, 7000);
 
     // Human Player Handler
     var turnFinish = 0; // to prevent multiple click !!
